@@ -181,16 +181,17 @@ def setup(server_name, connect_after, config_dir):
         'system': 'linux',
         'server_%s' % server_name: 'on',
         'proxy_mode': 'none',
+        'withbinary': '',
         'fileprefix': '',
         'customdirectives': '',
-        'mode_1': 'on',
+        'protocol_1': 'on',
         'tosaccept': 'on',
         'tosaccept2': 'on'
     }
     
     response = session.post(generator_url, data=config_data)
     
-    if '0 files in package' in response.text:
+    if 'zero files in package' in response.text:
         print 'Invalid server name.'
         return
 
