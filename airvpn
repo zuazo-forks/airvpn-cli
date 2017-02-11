@@ -51,7 +51,8 @@ import lxml.html
 import requests
 import texttable
 
-PID_PATH = '/var/run/openvpn.pid'
+PID_PATH = '/var/run/airvpn.pid'
+LOG_PATH = '/var/log/airvpn.log'
 
 
 # Utility Functions
@@ -239,7 +240,7 @@ def connect(server_name, config_dir):
     if disconnect():
         print 'Starting OpenVPN daemon with %s configuration...' % server_name
         try:
-            openvpn('--config', os.path.abspath(config_path), '--writepid', PID_PATH, daemon=True)
+            openvpn('--config', os.path.abspath(config_path), '--writepid', PID_PATH, '--log', LOG_PATH, daemon=True)
         except:
             print 'Failed to start OpenVPN daemon.'
 
