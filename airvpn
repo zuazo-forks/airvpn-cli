@@ -329,18 +329,18 @@ def status(server_name):
     AirVPN server.
     """
     response = requests.get('https://airvpn.org/status/')
-    
+
     if response.status_code == 200:
         page = lxml.html.fromstring(response.text)
-        
+
         connected = False
 
         if not server_name:
             # get the current server name, if any
-            connection_status = page.xpath('//*[@id="boxes"]/div[2]/span/text()')[0].strip()
-            if connection_status == 'Connected!':
+            connection_status = page.xpath('//*[@id="header_info"]/span/b/a/img[@src="/img/icons/connected_yes.png"]/@alt')[0].strip()
+            if connection_status == 'Connected':
                 connected = True
-                server_name = page.xpath('//*[@id="boxes"]/div[2]/div/b/a/text()')[0].strip().lower()
+                server_name = page.xpath('//*[@id="header_info"]/span/b/a/text()')[0].strip().lower()
             else:
                 print 'You are not connected to an AirVPN server.'
                 return 
@@ -348,10 +348,10 @@ def status(server_name):
         server_boxes = page.xpath('//div[@class="air_server_box_1"]')
         
         for box in server_boxes:
-            name = box.xpath('div[1]/div[1]/div[1]/text()')[0].strip().lower()
+            name = box.xpath('div/div/div/a/text()')[0].strip().lower()
             if name == server_name:
-                bandwidth = box.xpath('div[2]/div[1]/div[1]/div[2]/text()')[0].strip()
-                users = box.xpath('div[2]/div[1]/span/text()')[0].strip()
+                bandwidth = box.xpath('div/div/div/div[@class="server_status_load_caption"]/text()')[0].strip()
+                users = box.xpath('div/div/span[@class="server_status_item"]/text()')[0].strip()
                 if connected:
                     print 'Connected to %s' % name.capitalize()
                 else:
@@ -419,7 +419,9 @@ def print_rules(lan_ip_block, interface, virtual_interface, config_dir):
 def main(args):
     if args['<server-name>']:
         args['<server-name>'] = [x.lower() for x in args['<server-name>']]
-    
+    else:
+       args['<server-name>'] = [ None ]
+
     if args['setup']:
         setup(args['<server-name>'],
               args['--connect'],
@@ -446,5 +448,5 @@ def main(args):
 
 
 if __name__ == '__main__':
-    args = docopt(__doc__, version='AirVPN CLI v1.0.1')
+    args = docopt(__doc__, version='AirVPN CLI v1.0.2')
     main(args)
